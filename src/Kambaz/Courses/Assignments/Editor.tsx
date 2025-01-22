@@ -124,7 +124,7 @@ export default function AssignmentEditor() {
                 </tr>
                 <tr>
                   <td>
-                    <input id="wd-available-from" type="Date" value={"2024-05-10"} />
+                    <input id="wd-available-from" type="Date" value={"2024-05-06"} />
                   </td>
                   <td>
                     <input id="wd-available-until" type="Date" value={"2024-05-20"} />
