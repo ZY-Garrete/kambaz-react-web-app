@@ -68,12 +68,12 @@ export default function AssignmentEditor() {
 
           {/* Submission Type */}
           <Form.Group as={Row} className="mb-3">
-            {/* ✅ 左侧 - Submission Type Label */}
+            {/* Submission Type Label */}
             <Form.Label column sm={3} className="text-muted">
               Submission Type
             </Form.Label>
 
-            {/* ✅ 右侧 - 需要一个大框包裹所有内容 */}
+            {/* 需要一个大框包裹所有内容 */}
             <Col sm={9}>
               <Card className="p-3">
                 {/* 🔽 Submission Type 下拉框 */}
@@ -83,7 +83,7 @@ export default function AssignmentEditor() {
                   <option value="External Tool">External Tool</option>
                 </Form.Select>
 
-                {/* ✅ Online Entry Options 复选框组 */}
+                {/*  Online Entry Options 复选框组 */}
                 <div className="mt-3">
                   <strong>Online Entry Options</strong>
                   <Form.Check type="checkbox" label="Text Entry" />
@@ -97,15 +97,12 @@ export default function AssignmentEditor() {
           </Form.Group>
 
           <Form.Group as={Row} className="mb-3">
-            {/* ✅ 左侧 - Assign Label */}
             <Form.Label column sm={3} className="text-muted">
               Assign
             </Form.Label>
 
-            {/* ✅ 右侧 - 需要一个大框包裹所有内容 */}
             <Col sm={9}>
               <Card className="p-3">
-                {/* 🔽 Assign To 选择框 */}
                 <Form.Label><strong>Assign to</strong></Form.Label>
                 <Form.Control as="select" defaultValue="Everyone">
                   <option>Everyone</option>
@@ -113,11 +110,9 @@ export default function AssignmentEditor() {
                   <option>Group 2</option>
                 </Form.Control>
 
-                {/* ✅ Due 日期输入框 */}
                 <Form.Label className="mt-3"><strong>Due</strong></Form.Label>
                 <Form.Control type="date" defaultValue="2024-05-13" />
 
-                {/* ✅ Available From & Until 日期输入框 */}
                 <Row className="mt-3">
                   <Col sm={6}>
                     <Form.Label><strong>Available From</strong></Form.Label>
