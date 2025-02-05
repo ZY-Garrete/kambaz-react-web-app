@@ -1,7 +1,6 @@
 import ListGroup from "react-bootstrap/esm/ListGroup";
 import ModulesControls from "./ModulesControls";
 import { BsGripVertical } from "react-icons/bs";
-import GreenCheckmark from "./GreenCheckmark";
 import LessonControlButtons from "./LessonControlButtons";
 
 export default function Modules() {
