@@ -1,10 +1,7 @@
-import ModulesControls from "../Modules/ModulesControls"
 import { ListGroup, Button } from "react-bootstrap"
 import LessonControlButtons from "../Modules/LessonControlButtons"
 import { BsGripVertical } from "react-icons/bs";
 import AssignmentsControls from "./AssignmentsControls";
-import AssignmentItem from "./AssignmentItem";
-import GreenCheckmark from "../Modules/GreenCheckmark";
 import { BsThreeDotsVertical, BsPlus } from "react-icons/bs";
 import { PiNotePencilDuotone } from "react-icons/pi";
 import { Link } from "react-router-dom";  // ✅ 确保导入 Link 组件
@@ -25,7 +22,7 @@ export default function Assignments() {
 
         <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray" id="wd-Assignment">
           <div className="wd-title p-3 ps-2 bg-light d-flex justify-content-between align-items-center">
-            {/* ✅ 左侧：拖拽图标 + 下拉箭头 + 文字 */}
+            {/*  左侧：拖拽图标 + 下拉箭头 + 文字 */}
             <div className="d-flex align-items-center">
               <Button
                 variant="light"
@@ -38,7 +35,7 @@ export default function Assignments() {
               <span className="fw-bold">ASSIGNMENTS</span>
             </div>
 
-            {/* ✅ 右侧：按钮组 */}
+            {/*  右侧：按钮组 */}
             <div className="d-flex align-items-center">
               {/* 40% of Total 按钮（灰色圆角） */}
               <Button variant="outline-secondary" size="lg" className="rounded-pill px-3 me-2">
