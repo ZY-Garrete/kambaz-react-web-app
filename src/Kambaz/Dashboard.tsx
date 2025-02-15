@@ -1,19 +1,53 @@
 import { Link } from "react-router-dom";
-import { Row, Col, Card, Button } from "react-bootstrap"; // ✅ 导入 Bootstrap 组件
+import * as db from "./Database";
+//import { Row, Col, Card, Button } from "react-bootstrap"; // ✅ 导入 Bootstrap 组件
 
 export default function Dashboard() {
+    const courses = db.courses;
     return (
         <div id="wd-dashboard">
             <h1 id="wd-dashboard-title">Dashboard</h1>
             <hr />
-            <h2 id="wd-dashboard-published">Published Courses (12)</h2>
+            <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2>
             <hr />
 
-            <div id="wd-dashboard-courses">
-                {/* ✅ 使用 Bootstrap Grid */}
+            <div id="wd-dashboard-courses" className="row">
+                <div className="row row-cols-1 row-cols-md-5 g-4">
+                    {courses.map((course) => (
+                        <div key={course._id} className="wd-dashboard-course col" style={{ width: "300px" }}>
+                            <div className="card rounded-3 overflow-hidden">
+                                <Link to={`/Kambaz/Courses/${course._id}/Home`}
+                                    className="wd-dashboard-course-link text-decoration-none text-dark" >
+                                    <img src={course.image || "/images/reactjs.jpg"} width="100%" height={160} alt={course.name} />
+                                    <div className="card-body">
+                                        <h5 className="wd-dashboard-course-title card-title">
+                                            {course.name} </h5>
+                                        <p className="wd-dashboard-course-number">
+                                            {course.number}
+                                        </p>
+                                        <p className="wd-dashboard-course-credits">
+                                            Credits: {course.credits}
+                                        </p>
+                                        <p className="wd-dashboard-course-title card-text overflow-y-hidden" style={{ maxHeight: 100 }}>
+                                            {course.description} </p>
+                                        <button className="btn btn-primary"> Go </button>
+                                    </div>
+                                </Link>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>);
+}
+
+
+{/*     <div id="wd-dashboard-courses">
+
+
+               ✅ 使用 Bootstrap Grid 
                 <Row xs={1} md={5} className="g-4">
 
-                    {/* 课程 1 - 完全按照老师示例 */}
                     <Col className="wd-dashboard-course" style={{ width: "300px" }}>
                         <Card>
                             <Link to="/Kambaz/Courses/1234/Home"
@@ -30,7 +64,6 @@ export default function Dashboard() {
                         </Card>
                     </Col>
 
-                    {/* 课程 2 - 另一门课程 */}
                     <Col className="wd-dashboard-course" style={{ width: "300px" }}>
                         <Card>
                             <Link to="/Kambaz/Courses/5100/Home"
@@ -47,7 +80,6 @@ export default function Dashboard() {
                         </Card>
                     </Col>
 
-                    {/* 课程 3 */}
                     <Col className="wd-dashboard-course" style={{ width: "300px" }}>
                         <Card>
                             <Link to="/Kambaz/Courses/5010/Home"
@@ -64,7 +96,6 @@ export default function Dashboard() {
                         </Card>
                     </Col>
 
-                    {/* 课程 4 */}
                     <Col className="wd-dashboard-course" style={{ width: "300px" }}>
                         <Card>
                             <Link to="/Kambaz/Courses/5340/Home"
@@ -81,7 +112,6 @@ export default function Dashboard() {
                         </Card>
                     </Col>
 
-                    {/* 课程 5 */}
                     <Col className="wd-dashboard-course" style={{ width: "300px" }}>
                         <Card>
                             <Link to="/Kambaz/Courses/5330/Home"
@@ -98,7 +128,7 @@ export default function Dashboard() {
                         </Card>
                     </Col>
 
-                    {/* 课程 6 */}
+
                     <Col className="wd-dashboard-course" style={{ width: "300px" }}>
                         <Card>
                             <Link to="/Kambaz/Courses/5800/Home"
@@ -115,7 +145,6 @@ export default function Dashboard() {
                         </Card>
                     </Col>
 
-                    {/* 课程 7 */}
                     <Col className="wd-dashboard-course" style={{ width: "300px" }}>
                         <Card>
                             <Link to="/Kambaz/Courses/7150/Home"
@@ -133,7 +162,8 @@ export default function Dashboard() {
                     </Col>
 
                 </Row>
+               
             </div>
         </div>
     );
-}
+} */}
