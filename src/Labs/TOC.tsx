@@ -14,7 +14,9 @@ export default function TOC() {
       <li className="nav-item"><a id="wd-github" href="https://github.com/ZY-Garrete" target="_blank"
         className="nav-link">My GitHub</a></li>
       <li className="nav-item"><a id="wd-as2" href="https://github.com/ZY-Garrete/kambaz-react-web-app/tree/a2" target="_blank"
-        className="nav-link" > Zuyu Guo's A2 branch </a>
+        className="nav-link" > Zuyu Guo's A2 branch </a></li>
+      <li className="nav-item"><a id="wd-as3" href="https://github.com/ZY-Garrete/kambaz-react-web-app/tree/a3" target="_blank"
+        className="nav-link" > Zuyu Guo's A3 branch </a>
       </li>
     </ul>
   );
