@@ -9,6 +9,18 @@ import { FaSearch } from "react-icons/fa";
 import * as db from "../../Database";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteAssignment } from "./reducer";
+import { RootState } from "../../store";
+
+// 定义 Assignment 接口
+interface Assignment {
+  _id: string;
+  title: string;
+  course: string;
+  type: string;
+  points: number;
+  availableDate: string;
+  dueDate: string;
+}
 
 export default function Assignments() {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -17,25 +29,23 @@ export default function Assignments() {
   const dispatch = useDispatch();
 
   // 可以选择使用Redux的assignments或直接使用db.assignments
-  const { assignments } = useSelector((state) =>
+  const { assignments } = useSelector((state: RootState) =>
     state.assignmentsReducer || { assignments: db.assignments }
   );
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [assignmentToDelete, setAssignmentToDelete] = useState(null);
+  const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment | null>(null);
 
-  // 处理删除作业
-  const handleDeleteClick = (assignment) => {
+  // 使用正确的类型定义
+  const handleDeleteClick = (assignment: Assignment) => {
     setAssignmentToDelete(assignment);
     setShowDeleteModal(true);
   };
 
-  // 确认删除
   const handleConfirmDelete = () => {
-    if (assignmentToDelete) {
-      dispatch(deleteAssignment(assignmentToDelete._id));
-    }
+    if (!assignmentToDelete) return;
+    dispatch(deleteAssignment(assignmentToDelete._id));
     setShowDeleteModal(false);
   };
 
@@ -102,9 +112,9 @@ export default function Assignments() {
           {isExpanded && (
             <>
               {(assignments || db.assignments)
-                .filter(a => a.course === cid &&
+                .filter((a: Assignment) => a.course === cid &&
                   (searchQuery ? a.title.toLowerCase().includes(searchQuery.toLowerCase()) : true))
-                .map((assignment: any) => (
+                .map((assignment: Assignment) => (
                   <ListGroup.Item
                     key={assignment._id}
                     className="wd-lesson p-3 ps-1 d-flex justify-content-between align-items-center"
