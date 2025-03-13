@@ -16,35 +16,13 @@ export default function Kambaz() {
 
   const [courses, setCourses] = useState<any[]>(db.courses);
 
-  const [course, setCourse] = useState<any>({
+  const [course] = useState<any>({
     _id: "0", name: "New Course", number: "New Number",
     startDate: "2023-09-10", endDate: "2023-12-15",
     image: "/images/reactjs.jpg", description: "New Description"
   });
 
-  // add new course
-  const addNewCourse = () => {
-    const newCourse = { ...course, _id: uuidv4() };
-    setCourses([...courses, newCourse]);
-  };
 
-  // delete course
-  const deleteCourse = (courseId: string) => {
-    setCourses(courses.filter((course) => course._id !== courseId));
-  };
-
-  // update course
-  const updateCourse = () => {
-    setCourses(
-      courses.map((c) => {
-        if (c._id === course._id) {
-          return course;
-        } else {
-          return c;
-        }
-      })
-    );
-  };
 
   return (
     // Add Account Screen to Kambaz Landing Page
