@@ -6,7 +6,6 @@ import KambazNavigation from "./Navigation";
 
 import * as db from "./Database";
 import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 
 import "./styles.css";
 import ProtectedRoute from "./Account/ProtectedRoute";
@@ -14,15 +13,7 @@ import ProtectedRoute from "./Account/ProtectedRoute";
 
 export default function Kambaz() {
 
-  const [courses, setCourses] = useState<any[]>(db.courses);
-
-  const [course] = useState<any>({
-    _id: "0", name: "New Course", number: "New Number",
-    startDate: "2023-09-10", endDate: "2023-12-15",
-    image: "/images/reactjs.jpg", description: "New Description"
-  });
-
-
+  const [courses] = useState<any[]>(db.courses);
 
   return (
     // Add Account Screen to Kambaz Landing Page
