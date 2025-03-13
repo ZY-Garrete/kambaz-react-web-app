@@ -30,7 +30,8 @@ export default function AssignmentEditor() {
       const existingAssignment = db.assignments.find(a => a._id === aid && a.course === cid);
       if (existingAssignment) {
         // 格式化日期以适应datetime-local输入
-        const formatDate = (dateString) => dateString ? dateString.slice(0, 16) : "";
+        const formatDate = (dateString: string | undefined) => dateString ? dateString.slice(0, 16) : "";
+
 
         setAssignment({
           ...existingAssignment,
@@ -43,7 +44,7 @@ export default function AssignmentEditor() {
   }, [cid, aid]);
 
   // 处理表单值变化
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setAssignment(prev => ({
       ...prev,
