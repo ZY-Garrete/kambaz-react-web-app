@@ -1,15 +1,85 @@
 import { Form, Button, Container, Row, Col, Card } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { addAssignment, updateAssignment } from "./reducer";
 import * as db from "../../Database";
+import { v4 as uuidv4 } from "uuid";
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
-  // 使用 find 找到当前作业
-  const assignment = db.assignments.find(a => a._id === aid && a.course === cid);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  if (!assignment) {
-    return <div>Assignment not found</div>;
-  }
+  // 初始化作业状态
+  const [assignment, setAssignment] = useState({
+    _id: "",
+    title: "",
+    description: "",
+    points: 100,
+    type: "Multiple Modules",
+    course: cid,
+    dueDate: new Date().toISOString().slice(0, 16),
+    availableDate: new Date().toISOString().slice(0, 16),
+    availableUntilDate: new Date().toISOString().slice(0, 16)
+  });
+
+  // 加载现有作业数据（如果是编辑模式）
+  useEffect(() => {
+    if (aid && aid !== "new") {
+      const existingAssignment = db.assignments.find(a => a._id === aid && a.course === cid);
+      if (existingAssignment) {
+        // 格式化日期以适应datetime-local输入
+        const formatDate = (dateString) => dateString ? dateString.slice(0, 16) : "";
+
+        setAssignment({
+          ...existingAssignment,
+          dueDate: formatDate(existingAssignment.dueDate),
+          availableDate: formatDate(existingAssignment.availableDate),
+          availableUntilDate: formatDate(existingAssignment.dueDate) // 使用dueDate作为默认值
+        });
+      }
+    }
+  }, [cid, aid]);
+
+  // 处理表单值变化
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setAssignment(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // 保存按钮处理
+  const handleSave = () => {
+    const assignmentToSave = {
+      ...assignment,
+      // 确保日期格式正确
+      dueDate: `${assignment.dueDate}:00`,
+      availableDate: `${assignment.availableDate}:00`,
+      availableUntilDate: `${assignment.availableUntilDate}:00`
+    };
+
+    if (aid === "new") {
+      // 创建新作业
+      dispatch(addAssignment({
+        ...assignmentToSave,
+        _id: `A${uuidv4().substring(0, 6)}`
+      }));
+    } else {
+      // 更新现有作业
+      dispatch(updateAssignment(assignmentToSave));
+    }
+
+    // 导航回作业列表
+    navigate(`/Kambaz/Courses/${cid}/Assignments`);
+  };
+
+  // 取消按钮处理
+  const handleCancel = () => {
+    navigate(`/Kambaz/Courses/${cid}/Assignments`);
+  };
 
   return (
     <Container className="mt-4">
@@ -18,7 +88,11 @@ export default function AssignmentEditor() {
           {/* Assignment Name */}
           <Form.Group className="mb-3">
             <Form.Label><b>Assignment Name</b></Form.Label>
-            <Form.Control defaultValue={assignment.title} />
+            <Form.Control
+              name="title"
+              value={assignment.title}
+              onChange={handleChange}
+            />
           </Form.Group>
 
           {/* Editable Assignment Description */}
@@ -26,7 +100,9 @@ export default function AssignmentEditor() {
             <Form.Control
               as="textarea"
               rows={12}
-              defaultValue={assignment.description}
+              name="description"
+              value={assignment.description}
+              onChange={handleChange}
             />
           </Form.Group>
 
@@ -36,7 +112,12 @@ export default function AssignmentEditor() {
               Points
             </Form.Label>
             <Col sm={9}>
-              <Form.Control type="number" defaultValue={assignment.points} />
+              <Form.Control
+                type="number"
+                name="points"
+                value={assignment.points}
+                onChange={handleChange}
+              />
             </Col>
           </Form.Group>
 
@@ -46,7 +127,11 @@ export default function AssignmentEditor() {
               Assignment Group
             </Form.Label>
             <Col sm={9}>
-              <Form.Select defaultValue={assignment.type}>
+              <Form.Select
+                name="type"
+                value={assignment.type}
+                onChange={handleChange}
+              >
                 <option value="Multiple Modules">Multiple Modules</option>
                 <option value="QUIZ">Quiz</option>
                 <option value="PROJECT">Project</option>
@@ -66,6 +151,7 @@ export default function AssignmentEditor() {
               </Form.Select>
             </Col>
           </Form.Group>
+
           {/* Submission Type */}
           <Form.Group as={Row} className="mb-3">
             <Form.Label column sm={3} className="text-muted">
@@ -94,8 +180,6 @@ export default function AssignmentEditor() {
             </Col>
           </Form.Group>
 
-
-
           <Form.Group as={Row} className="mb-3">
             <Form.Label column sm={3} className="text-muted">
               Assign
@@ -113,7 +197,9 @@ export default function AssignmentEditor() {
                 <Form.Label className="mt-3"><strong>Due</strong></Form.Label>
                 <Form.Control
                   type="datetime-local"
-                  defaultValue={assignment.dueDate.slice(0, 16)}
+                  name="dueDate"
+                  value={assignment.dueDate}
+                  onChange={handleChange}
                 />
 
                 <Row className="mt-3">
@@ -121,14 +207,18 @@ export default function AssignmentEditor() {
                     <Form.Label><strong>Available From</strong></Form.Label>
                     <Form.Control
                       type="datetime-local"
-                      defaultValue={assignment.availableDate.slice(0, 16)}
+                      name="availableDate"
+                      value={assignment.availableDate}
+                      onChange={handleChange}
                     />
                   </Col>
                   <Col sm={6}>
                     <Form.Label><strong>Until</strong></Form.Label>
                     <Form.Control
                       type="datetime-local"
-                      defaultValue={assignment.dueDate.slice(0, 16)}
+                      name="availableUntilDate"
+                      value={assignment.availableUntilDate}
+                      onChange={handleChange}
                     />
                   </Col>
                 </Row>
@@ -138,8 +228,8 @@ export default function AssignmentEditor() {
 
           {/* Save & Cancel Buttons */}
           <div className="d-flex justify-content-end gap-2">
-            <Button variant="secondary">Cancel</Button>
-            <Button variant="danger">Save</Button>
+            <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
+            <Button variant="danger" onClick={handleSave}>Save</Button>
           </div>
         </Col>
       </Row>

@@ -1,21 +1,78 @@
-import { ListGroup, Button } from "react-bootstrap"
-import LessonControlButtons from "../Modules/LessonControlButtons"
+import { ListGroup, Button, Modal, InputGroup, Form } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
-import AssignmentsControls from "./AssignmentsControls";
 import { BsThreeDotsVertical, BsPlus } from "react-icons/bs";
 import { PiNotePencilDuotone } from "react-icons/pi";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { BsFillCaretDownFill, BsFillCaretRightFill } from "react-icons/bs";
+import { FaSearch } from "react-icons/fa";
 import * as db from "../../Database";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteAssignment } from "./reducer";
 
 export default function Assignments() {
   const [isExpanded, setIsExpanded] = useState(true);
   const { cid } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // 可以选择使用Redux的assignments或直接使用db.assignments
+  const { assignments } = useSelector((state) =>
+    state.assignmentsReducer || { assignments: db.assignments }
+  );
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [assignmentToDelete, setAssignmentToDelete] = useState(null);
+
+  // 处理删除作业
+  const handleDeleteClick = (assignment) => {
+    setAssignmentToDelete(assignment);
+    setShowDeleteModal(true);
+  };
+
+  // 确认删除
+  const handleConfirmDelete = () => {
+    if (assignmentToDelete) {
+      dispatch(deleteAssignment(assignmentToDelete._id));
+    }
+    setShowDeleteModal(false);
+  };
 
   return (
     <div id="wd-assignments">
-      <AssignmentsControls /><br />
+      {/* 搜索栏和按钮组 */}
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        {/* 搜索栏 */}
+        <InputGroup style={{ maxWidth: "300px" }}>
+          <InputGroup.Text>
+            <FaSearch />
+          </InputGroup.Text>
+          <Form.Control
+            type="text"
+            placeholder="Search for Assignments"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </InputGroup>
+
+        {/* 按钮组 - 添加回Group按钮 */}
+        <div>
+          <Button
+            variant="secondary"
+            className="me-2"
+            onClick={() => console.log("Group功能待实现")}
+          >
+            <BsPlus className="me-1" /> Group
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => navigate(`/Kambaz/Courses/${cid}/Assignments/new`)}
+          >
+            <BsPlus className="me-1" /> Assignment
+          </Button>
+        </div>
+      </div>
 
       <ListGroup className="rounded-0" id="wd-modules">
         <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray" id="wd-Assignment">
@@ -36,9 +93,6 @@ export default function Assignments() {
               <Button variant="outline-secondary" size="lg" className="rounded-pill px-3 me-2">
                 40% of Total
               </Button>
-              <Button variant="light" size="lg" className="me-2">
-                <BsPlus />
-              </Button>
               <Button variant="light" size="lg">
                 <BsThreeDotsVertical />
               </Button>
@@ -47,9 +101,10 @@ export default function Assignments() {
 
           {isExpanded && (
             <>
-              {db.assignments
-                .filter(a => a.course === cid)
-                .map((assignment) => (
+              {(assignments || db.assignments)
+                .filter(a => a.course === cid &&
+                  (searchQuery ? a.title.toLowerCase().includes(searchQuery.toLowerCase()) : true))
+                .map((assignment: any) => (
                   <ListGroup.Item
                     key={assignment._id}
                     className="wd-lesson p-3 ps-1 d-flex justify-content-between align-items-center"
@@ -73,13 +128,45 @@ export default function Assignments() {
                       <small className="text-muted"> {new Date(assignment.dueDate).toLocaleString()} | {assignment.points} pts</small>
                     </div>
 
-                    <LessonControlButtons />
+                    <div>
+                      <Button
+                        variant="warning"
+                        className="me-2"
+                        onClick={() => navigate(`/Kambaz/Courses/${cid}/Assignments/${assignment._id}`)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="danger"
+                        onClick={() => handleDeleteClick(assignment)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </ListGroup.Item>
                 ))}
             </>
           )}
         </ListGroup.Item>
       </ListGroup>
+
+      {/* 删除确认模态框 */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this assignment?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleConfirmDelete}>
+            Yes, Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

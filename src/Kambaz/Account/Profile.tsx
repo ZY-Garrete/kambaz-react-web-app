@@ -1,68 +1,47 @@
-import { Link } from "react-router-dom";
-import { Form, Button } from "react-bootstrap";  // ✅ 引入 Bootstrap 组件
-
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setCurrentUser } from "./reducer";
 export default function Profile() {
+  const [profile, setProfile] = useState<any>({});
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const fetchProfile = () => {
+    if (!currentUser) return navigate("/Kambaz/Account/Signin");
+    setProfile(currentUser);
+  };
+  const signout = () => {
+    dispatch(setCurrentUser(null));
+    navigate("/Kambaz/Account/Signin");
+  };
+  useEffect(() => { fetchProfile(); }, []);
   return (
-    <div id="wd-profile-screen" >
-      <h1 className="mb-2">Profile</h1>
-
-      <Form>
-        {/* ✅ 用户名 & 密码 */}
-        <Form.Control
-          id="wd-username"
-          defaultValue="alice"
-          placeholder="Username"
-          className="mb-2"
-        />
-        <Form.Control
-          id="wd-password"
-          defaultValue="123"
-          placeholder="Password"
-          type="password"
-          className="mb-2"
-        />
-
-        <Form.Control
-          id="wd-firstname"
-          defaultValue="Alice"
-          placeholder="First Name"
-          className="mb-2"
-        />
-        <Form.Control
-          id="wd-lastname"
-          defaultValue="Wonderland"
-          placeholder="Last Name"
-          className="mb-2"
-        />
-        <Form.Control
-          id="wd-dob"
-          defaultValue="2000-01-01"
-          type="date"
-          className="mb-2"
-        />
-        <Form.Control
-          id="wd-email"
-          defaultValue="alice@wonderland"
-          type="email"
-          placeholder="Email"
-          className="mb-2"
-        />
-
-        {/* ✅ 角色选择 */}
-        <Form.Select id="wd-role" defaultValue="FACULTY" className="mb-2">
-          <option value="USER">User</option>
-          <option value="ADMIN">Admin</option>
-          <option value="FACULTY">Faculty</option>
-          <option value="STUDENT">Student</option>
-        </Form.Select>
-
-        {/* ✅ Sign Out 按钮 */}
-        <Link to="/Kambaz/Account/Signin">
-          <Button id="wd-signout-btn" variant="danger" className="w-100">
+    <div className="wd-profile-screen">
+      <h3>Profile</h3>
+      {profile && (
+        <div>
+          <input defaultValue={profile.username} id="wd-username" className="form-control mb-2"
+            onChange={(e) => setProfile({ ...profile, username: e.target.value })} />
+          <input defaultValue={profile.password} id="wd-password" className="form-control mb-2"
+            onChange={(e) => setProfile({ ...profile, password: e.target.value })} />
+          <input defaultValue={profile.firstName} id="wd-firstname" className="form-control mb-2"
+            onChange={(e) => setProfile({ ...profile, firstName: e.target.value })} />
+          <input defaultValue={profile.lastName} id="wd-lastname" className="form-control mb-2"
+            onChange={(e) => setProfile({ ...profile, lastName: e.target.value })} />
+          <input defaultValue={profile.dob} id="wd-dob" className="form-control mb-2"
+            onChange={(e) => setProfile({ ...profile, dob: e.target.value })} type="date" />
+          <input defaultValue={profile.email} id="wd-email" className="form-control mb-2"
+            onChange={(e) => setProfile({ ...profile, email: e.target.value })} />
+          <select onChange={(e) => setProfile({ ...profile, role: e.target.value })}
+            className="form-control mb-2" id="wd-role">
+            <option value="USER">User</option> <option value="ADMIN">Admin</option>
+            <option value="FACULTY">Faculty</option> <option value="STUDENT">Student</option>
+          </select>
+          <button onClick={signout} className="btn btn-danger w-100 mb-2" id="wd-signout-btn">
             Sign out
-          </Button>
-        </Link>
-      </Form>
-    </div>
-  );
+          </button>
+        </div>
+      )}
+    </div>);
 }

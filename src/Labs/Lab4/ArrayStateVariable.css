@@ -1,0 +1,64 @@
+/* 让整个组件靠左对齐 */
+#wd-array-state-variables {
+    max-width: 400px;
+    margin-left: 0px;
+    /* 让组件靠左 */
+
+
+    /* 让文本左对齐 */
+}
+
+/* "Add Element" 按钮样式 */
+#wd-add-element-click {
+    background-color: #28a745;
+    /* 绿色 */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+#wd-add-element-click:hover {
+    background-color: #218838;
+    /* 深一点的绿色 */
+}
+
+/* "Delete" 按钮样式 */
+#wd-delete-element-click {
+    background-color: #dc3545;
+    /* 红色 */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+#wd-delete-element-click:hover {
+    background-color: #c82333;
+    /* 深一点的红色 */
+}
+
+/* 数字列表样式 */
+#wd-array-state-variables ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* 每个列表项样式 */
+#wd-array-state-variables li {
+    display: flex;
+    justify-content: space-between;
+    /* 左右排列 */
+    align-items: center;
+    background: white;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px 0;
+    width: 50%;
+    /* 让列表项宽度固定 */
+}
