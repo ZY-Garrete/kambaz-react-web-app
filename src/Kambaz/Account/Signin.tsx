@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "./reducer";
 import * as db from "../Database";
+import * as client from "./client";
 
 export default function Signin() {
   // 添加credentials状态变量用于存储用户输入的凭据
@@ -11,20 +12,13 @@ export default function Signin() {
   const navigate = useNavigate();
 
   // 登录函数，验证用户凭据并处理登录逻辑
-  const signin = () => {
-    // 在数据库中搜索匹配的用户
-    const user = db.users.find(
-      (u) => u.username === credentials.username && u.password === credentials.password
-    );
-
-    // 如果找到匹配的用户
-    if (user) {
-      // 将用户存储到Redux中
-      dispatch(setCurrentUser(user));
-      // 导航到Dashboard页面
-      navigate("/Kambaz/Dashboard");
-    }
+  const signin = async () => {
+    const user = await client.signin(credentials);
+    if (!user) return;
+    dispatch(setCurrentUser(user));
+    navigate("/Kambaz/Dashboard");
   };
+
 
   return (
     <div id="wd-signin-screen">

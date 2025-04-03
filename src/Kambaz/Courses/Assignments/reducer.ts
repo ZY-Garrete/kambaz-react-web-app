@@ -10,6 +10,11 @@ const assignmentsSlice = createSlice({
     name: "assignments",
     initialState,
     reducers: {
+        // 添加 setAssignments action 以支持从API获取数据
+        setAssignments: (state, action) => {
+            state.assignments = action.payload;
+        },
+
         addAssignment: (state, { payload: assignment }) => {
             const newAssignment: any = {
                 _id: `A${uuidv4().substring(0, 6)}`, // 使用A前缀的ID
@@ -45,6 +50,7 @@ const assignmentsSlice = createSlice({
 });
 
 export const {
+    setAssignments,  // 导出新添加的 action
     addAssignment,
     deleteAssignment,
     updateAssignment,

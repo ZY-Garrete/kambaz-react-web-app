@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { addAssignment, updateAssignment } from "./reducer";
 import * as db from "../../Database";
 import { v4 as uuidv4 } from "uuid";
+import * as client from "./client";  // 导入客户端API
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
@@ -24,23 +25,45 @@ export default function AssignmentEditor() {
     availableUntilDate: new Date().toISOString().slice(0, 16)
   });
 
-  // 加载现有作业数据（如果是编辑模式）
+  // 修改加载逻辑以使用API
   useEffect(() => {
-    if (aid && aid !== "new") {
-      const existingAssignment = db.assignments.find(a => a._id === aid && a.course === cid);
-      if (existingAssignment) {
-        // 格式化日期以适应datetime-local输入
-        const formatDate = (dateString: string | undefined) => dateString ? dateString.slice(0, 16) : "";
+    const fetchAssignment = async () => {
+      if (aid && aid !== "new") {
+        try {
+          // 使用API获取作业详情
+          const existingAssignment = await client.findAssignmentById(aid);
+          if (existingAssignment) {
+            // 格式化日期以适应datetime-local输入
+            const formatDate = (dateString: string | undefined) =>
+              dateString ? dateString.slice(0, 16) : "";
 
+            setAssignment({
+              ...existingAssignment,
+              dueDate: formatDate(existingAssignment.dueDate),
+              availableDate: formatDate(existingAssignment.availableDate),
+              availableUntilDate: formatDate(existingAssignment.dueDate) // 使用dueDate作为默认值
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching assignment:", error);
+          // 如果API调用失败，回退到本地数据
+          const localAssignment = db.assignments.find(a => a._id === aid && a.course === cid);
+          if (localAssignment) {
+            const formatDate = (dateString: string | undefined) =>
+              dateString ? dateString.slice(0, 16) : "";
 
-        setAssignment({
-          ...existingAssignment,
-          dueDate: formatDate(existingAssignment.dueDate),
-          availableDate: formatDate(existingAssignment.availableDate),
-          availableUntilDate: formatDate(existingAssignment.dueDate) // 使用dueDate作为默认值
-        });
+            setAssignment({
+              ...localAssignment,
+              dueDate: formatDate(localAssignment.dueDate),
+              availableDate: formatDate(localAssignment.availableDate),
+              availableUntilDate: formatDate(localAssignment.dueDate)
+            });
+          }
+        }
       }
-    }
+    };
+
+    fetchAssignment();
   }, [cid, aid]);
 
   // 处理表单值变化
@@ -52,8 +75,8 @@ export default function AssignmentEditor() {
     }));
   };
 
-  // 保存按钮处理
-  const handleSave = () => {
+  // 修改保存逻辑以使用API
+  const handleSave = async () => {
     const assignmentToSave = {
       ...assignment,
       // 确保日期格式正确
@@ -62,19 +85,33 @@ export default function AssignmentEditor() {
       availableUntilDate: `${assignment.availableUntilDate}:00`
     };
 
-    if (aid === "new") {
-      // 创建新作业
-      dispatch(addAssignment({
-        ...assignmentToSave,
-        _id: `A${uuidv4().substring(0, 6)}`
-      }));
-    } else {
-      // 更新现有作业
-      dispatch(updateAssignment(assignmentToSave));
-    }
+    try {
+      if (aid === "new") {
+        // 创建新作业
+        const newId = `A${uuidv4().substring(0, 6)}`;
+        const newAssignment = {
+          ...assignmentToSave,
+          _id: newId
+        };
 
-    // 导航回作业列表
-    navigate(`/Kambaz/Courses/${cid}/Assignments`);
+        // 调用API创建作业
+        const createdAssignment = await client.createAssignment(cid || "", newAssignment);
+        dispatch(addAssignment(createdAssignment));
+      } else if (aid) {  // 添加这个检查
+        // 确保aid存在且不为undefined
+        const updatedAssignment = await client.updateAssignment(aid, assignmentToSave);
+        dispatch(updateAssignment(updatedAssignment));
+      } else {
+        console.error("Assignment ID is undefined");
+        // 可选：显示错误消息
+      }
+
+      // 导航回作业列表
+      navigate(`/Kambaz/Courses/${cid}/Assignments`);
+    } catch (error) {
+      console.error("Error saving assignment:", error);
+      // 可以添加错误处理，例如显示错误信息
+    }
   };
 
   // 取消按钮处理
@@ -82,6 +119,7 @@ export default function AssignmentEditor() {
     navigate(`/Kambaz/Courses/${cid}/Assignments`);
   };
 
+  // 其余表单部分保持不变
   return (
     <Container className="mt-4">
       <Row className="justify-content-center">

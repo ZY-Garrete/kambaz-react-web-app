@@ -3,13 +3,14 @@ import { BsGripVertical } from "react-icons/bs";
 import { BsThreeDotsVertical, BsPlus } from "react-icons/bs";
 import { PiNotePencilDuotone } from "react-icons/pi";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";  // 添加 useEffect
 import { BsFillCaretDownFill, BsFillCaretRightFill } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
 import * as db from "../../Database";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteAssignment } from "./reducer";
+import { deleteAssignment, setAssignments } from "./reducer";  // 添加 setAssignments
 import { RootState } from "../../store";
+import * as client from "./client";  // 导入客户端API
 
 // 定义 Assignment 接口
 interface Assignment {
@@ -37,18 +38,44 @@ export default function Assignments() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment | null>(null);
 
+  // 添加API调用获取作业列表
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      if (cid) {
+        try {
+          const data = await client.findAssignmentsForCourse(cid);
+          dispatch(setAssignments(data));
+        } catch (error) {
+          console.error("Error fetching assignments:", error);
+        }
+      }
+    };
+
+    fetchAssignments();
+  }, [cid, dispatch]);
+
   // 使用正确的类型定义
   const handleDeleteClick = (assignment: Assignment) => {
     setAssignmentToDelete(assignment);
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDelete = () => {
+  // 修改删除处理逻辑以使用API
+  const handleConfirmDelete = async () => {
     if (!assignmentToDelete) return;
-    dispatch(deleteAssignment(assignmentToDelete._id));
-    setShowDeleteModal(false);
+
+    try {
+      // 调用API删除作业
+      await client.deleteAssignment(assignmentToDelete._id);
+      // 更新Redux状态
+      dispatch(deleteAssignment(assignmentToDelete._id));
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error("Error deleting assignment:", error);
+    }
   };
 
+  // 其余组件保持不变
   return (
     <div id="wd-assignments">
       {/* 搜索栏和按钮组 */}
