@@ -10,7 +10,6 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import "./styles.css";
 import ProtectedRoute from "./Account/ProtectedRoute";
-import { v4 as uuidv4 } from "uuid";
 import * as courseClient from "./Courses/client";
 import { fetchAllCourses } from "./Courses/client";
 export default function Kambaz() {
