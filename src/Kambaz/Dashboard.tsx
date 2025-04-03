@@ -6,7 +6,6 @@ import * as enrollmentClient from "./Courses/Enrollments/client";
 
 export default function Dashboard({
     courses,
-    setCourses,
     deleteCourse,
     addNewCourse,
     updateCourse,

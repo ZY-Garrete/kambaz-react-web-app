@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FaPencil } from "react-icons/fa6";
 import * as client from "./client";
 import { FaTrash } from "react-icons/fa";
