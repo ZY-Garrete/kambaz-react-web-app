@@ -42,12 +42,6 @@ export default function Lab4() {
             <CounterRedux />
             <AddRedux />
             <TodoList />
-
-
-
-
-
-
         </div>
     );
 }
