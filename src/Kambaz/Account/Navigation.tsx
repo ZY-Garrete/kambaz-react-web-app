@@ -18,11 +18,21 @@ export default function AccountNavigation() {
           </NavLink>
         </>
       )}
+
       {currentUser && (
-        <NavLink to="/Kambaz/Account/Profile" id="wd-account-profile-link"
-          className={({ isActive }) => `list-group-item ${isActive ? 'active' : 'text-danger'} border border-0`}>
-          Profile
-        </NavLink>
+        <>
+          <NavLink to="/Kambaz/Account/Profile" id="wd-account-profile-link"
+            className={({ isActive }) => `list-group-item ${isActive ? 'active' : 'text-danger'} border border-0`}>
+            Profile
+          </NavLink>
+
+          {currentUser.role === "ADMIN" && (
+            <NavLink to="/Kambaz/Account/Users"
+              className={({ isActive }) => `list-group-item ${isActive ? 'active' : 'text-danger'} border border-0`}>
+              Users
+            </NavLink>
+          )}
+        </>
       )}
     </div>
   );

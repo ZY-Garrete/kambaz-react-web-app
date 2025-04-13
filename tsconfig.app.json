@@ -25,6 +25,7 @@
     "noUncheckedSideEffectImports": true
   },
   "include": [
-    "src"
+    "src",
+    "../kambaz-node-server-app/Lab5/PathParameters.js"
   ]
 }

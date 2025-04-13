@@ -12,9 +12,6 @@ const enrollmentsSlice = createSlice({
     name: "enrollments",
     initialState,
     reducers: {
-        setEnrollments: (state, action) => {
-            state.enrollments = action.payload;
-        },
         // 添加新的选课记录
         enrollCourse: (state, { payload }) => {
             // 检查是否已经选过该课程
