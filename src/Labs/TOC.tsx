@@ -24,7 +24,10 @@ export default function TOC() {
       <li className="nav-item"><a id="wd-as3" href="https://github.com/ZY-Garrete/kambaz-react-web-app/tree/a3" target="_blank" className="nav-link">Zuyu Guo's A3 branch</a></li>
       <li className="nav-item"><a id="wd-server-link" href="https://kambaz-node-server-app-9dvi.onrender.com/" target="_blank" className="nav-link">Render Server Home</a></li>
       <li className="nav-item"><a id="wd-as5" href="https://github.com/ZY-Garrete/kambaz-react-web-app/tree/a5" target="_blank"
-        className="nav-link" > Zuyu Guo's A5 branch </a>
+        className="nav-link" > Zuyu Guo's A5 branch </a></li>
+      <li className="nav-item"><a id="wd-as6" href="https://github.com/ZY-Garrete/kambaz-react-web-app/tree/a6" target="_blank"
+        className="nav-link" > Zuyu Guo's A6 branch </a>
+
 
       </li>
     </ul>
