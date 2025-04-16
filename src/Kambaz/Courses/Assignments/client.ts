@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const REMOTE_SERVER = process.env.VITE_REMOTE_SERVER_A6 || process.env.REACT_APP_REMOTE_SERVER;
+export const REMOTE_SERVER = process.env.VITE_REMOTE_SERVER_A7 || process.env.REACT_APP_REMOTE_SERVER;
 const API = `${REMOTE_SERVER}/api`;
 
 // 获取特定课程的所有作业
