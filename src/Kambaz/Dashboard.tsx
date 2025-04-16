@@ -11,11 +11,16 @@ export default function Dashboard({
     updateCourse,
     course,
     setCourse,
+    enrolling,
+    setEnrolling
 }: any) {
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const { enrollments } = useSelector((state: any) => state.enrollmentsReducer || {});
     const [showOnlyEnrolled, setShowOnlyEnrolled] = useState(false);
+    const displayedCourses = showOnlyEnrolled
+        ? courses.filter((c: any) => isEnrolled(c._id))
+        : courses;
 
     useEffect(() => {
         const fetchEnrollments = async () => {
@@ -27,9 +32,31 @@ export default function Dashboard({
         fetchEnrollments();
     }, [currentUser]);
 
+    useEffect(() => {
+        console.log("showOnlyEnrolled changed:", showOnlyEnrolled);
+        console.log("Displayed courses:", displayedCourses);
+    }, [showOnlyEnrolled, displayedCourses]);
+
+    useEffect(() => {
+        console.log("All courses:", courses);
+    }, [courses]);
+
+    useEffect(() => {
+        console.log("Enrollments:", enrollments);
+    }, [enrollments]);
+
+
+
     const handleEnroll = async (courseId: string) => {
-        const data = await enrollmentClient.enrollCourseServer(currentUser._id, courseId);
-        dispatch(enrollCourse(data));
+        try {
+            const data = await enrollmentClient.enrollCourseServer(currentUser._id, courseId);
+            dispatch(enrollCourse(data));
+
+            // 强制组件重新渲染
+            setShowOnlyEnrolled(showOnlyEnrolled); // 触发状态更新
+        } catch (error) {
+            console.error("报名失败:", error);
+        }
     };
 
     const handleUnenroll = async (courseId: string) => {
@@ -38,28 +65,50 @@ export default function Dashboard({
     };
 
     const isEnrolled = (courseId: string) => {
-        return (enrollments || []).some(
-            (e: any) => e.user === currentUser?._id && e.course === courseId
-        );
+        if (!enrollments || !currentUser) return false;
+
+        return (enrollments || []).some((e: any) => {
+            // 将两者都转为字符串进行比较
+            const eCourse = typeof e.course === 'string' ? e.course : e.course?._id;
+            const eUser = typeof e.user === 'string' ? e.user : e.user?._id;
+
+            console.log(`比较: 用户=${eUser} vs ${currentUser?._id}, 课程=${eCourse} vs ${courseId}`);
+
+            return eUser === currentUser?._id && eCourse === courseId;
+        });
     };
 
-    const displayedCourses =
-        currentUser?.role === "STUDENT" && showOnlyEnrolled
-            ? courses.filter((c: any) => isEnrolled(c._id))
-            : courses;
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const response = await fetch('/api/courses');
+                const data = await response.json();
+                console.log("Fetched courses:", data);
+                // 更新 courses 状态
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+            }
+        };
+
+        fetchCourses();
+    }, []);
 
     return (
         <div id="wd-dashboard">
             <div className="d-flex justify-content-between align-items-center">
-                <h1 id="wd-dashboard-title">Dashboard</h1>
-                {currentUser?.role === "STUDENT" && (
-                    <button
-                        className="btn btn-primary"
-                        onClick={() => setShowOnlyEnrolled(!showOnlyEnrolled)}
-                    >
-                        {showOnlyEnrolled ? "Show All Courses" : "Enrollments"}
+                <h1 id="wd-dashboard-title">Dashboard
+
+                </h1>
+                {["FACULTY", "STUDENT"].includes(currentUser?.role) && (
+                    <button onClick={() => setEnrolling(!enrolling)} className="float-end btn btn-primary">
+                        {enrolling
+                            ? currentUser.role === "FACULTY"
+                                ? "Faculty enrolling Courses"
+                                : "Student enrolling Courses"
+                            : "All Courses"}
                     </button>
                 )}
+
             </div>
 
             <hr />
